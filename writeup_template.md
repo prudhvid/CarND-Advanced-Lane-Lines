@@ -21,6 +21,9 @@ The goals / steps of this project are the following:
 [image6]: ./images/test_result3.png "Thresolding Results"
 [image7]: ./images/test_result4.png "Thresolding Results"
 
+[image8]: ./images/persp.png "Perspective Transform"
+[image12]: ./images/final.png "Final Transformation"
+
 [image5]: ./examples/color_fit_lines.jpg "Fit Visual"
 [image6]: ./examples/example_output.jpg "Output"
 [video1]: ./project_video.mp4 "Video"
@@ -77,49 +80,41 @@ I used a combination of color and gradient thresholds to generate a binary image
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
-The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
+The code for my perspective transform includes a function called `undistort_image()`, in the 10th code cell of the IPython notebook.  The function takes as inputs an image (`img`). I chose the hardcode the source and destination points in the following manner:
 
 ```python
-src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
-dst = np.float32(
-    [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), 0]])
+src = np.array([[582, 455], [700, 455], [1150, 720], [150, 720]], dtype = np.float32)
+dst = np.array([[300, 0], [1000, 0], [1000, 720], [300, 720]], dtype = np.float32)
 ```
 
 This resulted in the following source and destination points:
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 585, 460      | 320, 0        | 
-| 203, 720      | 320, 720      |
-| 1127, 720     | 960, 720      |
-| 695, 460      | 960, 0        |
+| 585, 455      | 300, 0        | 
+| 150, 720      | 300, 720      |
+| 1150, 720     | 1000, 720      |
+| 700, 455      | 1000, 0        |
 
 I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
 
-![alt text][image4]
+![alt text][image8]
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
-Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
+For this, I've done very similar to what is said in the video lectures. After thresholding, I found the peaks in the histogram. And then used sliding window technique to identify all the rectangles nearby the histogram. After this, I tried to fit them using a second order polynomial. Whole of this can be seen in process_image function of code cell 9
 
 ![alt text][image5]
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I did this in lines # through # in my code in `my_other_file.py`
+To calcuate radii of curvature for both the lines, I used the equation of the radius of curvature mentioned in the video lectures. The code for this can be found in code cell 20(line 95-110). For the position of vehicle, I have taken help from the code of [Upul]( https://github.com/upul/CarND-Advanced-Lane-Lines). (115 - 120)
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
+I implemented this step in lines 125-140 and is similar to what is told in video lectures. Here is the example output for that.
 
-![alt text][image6]
+![alt text][image12]
 
 ---
 
@@ -127,7 +122,7 @@ I implemented this step in lines # through # in my code in `yet_another_file.py`
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](https://youtu.be/tkZsqcNjirQ)
 
 ---
 
@@ -135,4 +130,4 @@ Here's a [link to my video result](./project_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+My implementation didn't work well on challenege videos. I didn't make use of history and I think I should do that. It would fail if the s_thresholding fails in any case. To make it more robust, I think I should check for other thresholdings in varying conditions.
